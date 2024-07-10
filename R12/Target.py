@@ -1,7 +1,6 @@
 import numpy
 from matplotlib import pyplot
-
-from pyBat import Geometry
+from R12 import Geometry
 
 """
 Azimuth/Elevation are the positions of target as seen from the robot.
@@ -12,7 +11,7 @@ h_aspect = 45 returns a position at which the robot is at azimuth 45 with respec
 """
 
 class Target:
-    def __init__(self, x, y, z, rotation=180):
+    def __init__(self, x=0, y=0, z=0, rotation=180):
         self.x = x
         self.y = y
         self.z = z
@@ -22,7 +21,7 @@ class Target:
         self.leaf_frame.goto(x, y, z, yaw=rotation)
         self.world_frame_leaf_position = numpy.array([x, y, z])
 
-    def get_robot_position(self, distance, h_aspect=0, v_aspect=0, azimuth=0, elevation=0, plot=False, simple=False):
+    def get_robot_position(self, distance, h_aspect=0, v_aspect=0, azimuth=0, elevation=0, plot=False, simple=True):
         # In the leaf frame, what is the required position of the robot?
         leaf_frame_robot_position = Geometry.sph2cart(h_aspect, v_aspect, distance)
         leaf_frame_robot_position = numpy.array(leaf_frame_robot_position)

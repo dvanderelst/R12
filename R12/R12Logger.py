@@ -1,12 +1,13 @@
 from R12 import HTML
 from R12 import Settings
-from pyBat import Misc
+from R12 import Misc
+from R12 import FileOperations
 import time
 import os.path as path
 import webbrowser
 
-input_color = "#a9cce3"
-output_color = "##aeb6bf"
+cmd_color = "#a9cce3"
+response_color = "##aeb6bf"
 
 warning_color = '#f5cba7'
 error_color = '#f5b7b1'
@@ -14,9 +15,10 @@ message_color = '#a2d9ce'
 
 
 class Logger:
-    def __init__(self):
+    def __init__(self, auto_write=True):
         self.table = HTML.Table(header_row=['Time', 'Text'])
-        self.print_comments = True
+        self.console_log = [0, 1, 2, 'cmd'] # options: [0, 1, 2, 'cmd', 'rsp']
+        self.auto_write = auto_write
 
     def add(self, text, color=False, pre=False):
         if pre: text = '<pre>' + text + '</pre>'
@@ -31,27 +33,32 @@ class Logger:
         if level == 0: self.add(text, color=message_color)
         if level == 1: self.add(text, color=warning_color)
         if level == 2: self.add(text, color=error_color)
-        if self.print_comments: print(level, text)
+        if self.auto_write: self.write()
+        if level in self.console_log: print('lvl', level, text)
 
-    def add_input(self, text):
-        self.add(text, color=input_color, pre=True)
+    def add_sent_cmd(self, text):
+        self.add(text, color=cmd_color, pre=True)
+        if 'cmd' in self.console_log: print('cmd', text)
+        if self.auto_write: self.write()
 
-    def add_output(self, text):
-        self.add(text, color=output_color, pre=True)
+    def add_received_response(self, text):
+        self.add(text, color=response_color, pre=True)
+        if 'rsp' in self.console_log: print('rsp', text)
+        if self.auto_write: self.write()
 
-    def write(self, file_name):
-        htmlcode = str(self.table)
-        f = open(file_name, 'w')
-        f.write(htmlcode)
-        f.close()
+    def write(self):
+        out_file = path.join(Settings.log_dir, 'temp.html')
+        html_code = str(self.table)
+        try:
+            f = open(out_file, 'w')
+            f.write(html_code)
+            f.close()
+        except:
+            print('problem here:', out_file)
+        return out_file
 
     def view(self):
-        out_file = path.join(Settings.log_dir, 'temp.html')
-        self.write(out_file)
+        FileOperations.create_folder(Settings.log_dir)
+        out_file = self.write()
         webbrowser.open(out_file)
 
-# l = logger()
-# l.add('well', 'c')
-# l.add('well well', 'step')
-# l.add('sfdfd\r\n    fsdsf', 'o')
-# l.view()
