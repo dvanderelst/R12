@@ -17,7 +17,7 @@ from script import SCRIPT_MeasureSinglePosition as script
 ######### USER EDIT FROM HERE #######################
 
 WORLD_X = -200 #mm 
-WORLD_Y = 200 #mm
+WORLD_Y = 400 #mm
 WORLD_Z = 300 #mm
 WORLD_PITCH = 0 #deg
 WORLD_YAW = 27.5 #deg
@@ -55,7 +55,7 @@ def main():
     return script.do_measurement(WORLD_X, WORLD_Y, WORLD_Z, WORLD_PITCH, WORLD_YAW,
                                  REPEATS, DRY_RUN, RT_PLOT, DELAY, SAVE_DATA,
                                  REACH_LIMIT, DESCRIPTION,
-                                 save_data=SAVE_PATH)
+                                 save_path=SAVE_PATH)
 
 
 if __name__ == '__main__':
