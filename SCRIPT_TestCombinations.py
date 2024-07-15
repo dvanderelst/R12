@@ -10,9 +10,9 @@ import inspect
 ############## SET POSITION PARAMETERS HERE
 pitch = 0
 repeats = 5
-x_positions = np.linspace(-700, 0, 15) # min, max, number of steps
+x_positions = np.linspace(-100, 450, 12) # min, max, number of steps
 y_positions = np.linspace(0, 200, 3)
-yaw_positions = np.linspace(0, 30, 3)
+yaw_positions = np.linspace(0, 0, 3)
 ###########################################
 
 script_text = inspect.getsource(sys.modules[__name__])
