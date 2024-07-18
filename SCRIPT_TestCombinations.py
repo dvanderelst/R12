@@ -14,6 +14,7 @@ x_positions = np.linspace(-100, 450, 12) # min, max, number of steps
 #y_positions = np.asarray([0, 100, 200])
 y_positions = np.asarray([-100, 0, 100])
 select_z = 400 #set to None if you don't want to use want to change z based on y.
+# select_z = None
 yaw_positions = np.asarray([0])
 ###########################################
 
