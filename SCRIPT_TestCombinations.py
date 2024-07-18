@@ -11,8 +11,10 @@ import inspect
 pitch = 0
 repeats = 5
 x_positions = np.linspace(-100, 450, 12) # min, max, number of steps
-y_positions = np.linspace(0, 200, 3)
-yaw_positions = np.linspace(0, 0, 3)
+#y_positions = np.asarray([0, 100, 200])
+y_positions = np.asarray([-100, 0, 100])
+select_z = 400 #set to None if you don't want to use want to change z based on y.
+yaw_positions = np.asarray([0])
 ###########################################
 
 script_text = inspect.getsource(sys.modules[__name__])
@@ -79,7 +81,10 @@ for index, combination in enumerate(combinations):
     x_index = indices[0]
     y_index = indices[1]
     yaw_index = indices[2]
-    z_position = np.interp(current_y, y_extents, z_extents)
+    if select_z:
+        z_position = select_z
+    else:
+        z_position = np.interp(current_y, y_extents, z_extents)
     move_result = R.set_position(current_x, current_y, z_position, current_yaw, pitch)
     success_array[x_index, y_index, yaw_index] = move_result
     for i in range(repeats):
