@@ -10,9 +10,9 @@ import inspect
 ############## SET POSITION PARAMETERS HERE
 pitch = 0
 repeats = 5
-x_positions = np.linspace(-100, 450, 12)
+x_positions = np.linspace(-200, 400, 20)
 y_positions = np.asarray([-100, 0, 100])
-z_position = False
+z_position = 300
 yaw_positions = np.asarray([0])
 ###########################################
 
