@@ -6,12 +6,13 @@ import pickle
 import time
 import sys
 import inspect
+import easygui
 
 ############## SET POSITION PARAMETERS HERE
 pitch = 0
 repeats = 5
 x_positions = np.linspace(-200, 400, 20)
-y_positions = np.asarray([-100, 0, 100])
+y_positions = np.asarray([-100, -75, -50, -25, 0, 25, 50, 75, 100])
 z_position = 300
 yaw_positions = np.asarray([0])
 ###########################################
@@ -65,6 +66,12 @@ if path.exists(full_file_name):
             data_array = existing_data['data_array']
             success_array = existing_data['success_array']
             last_index = existing_data['last_index']
+
+#
+# Ask whether to start...
+#
+easygui.msgbox(msg='Start')
+time.sleep(15)
 
 for index, combination in enumerate(combinations):
     if index < last_index: continue
