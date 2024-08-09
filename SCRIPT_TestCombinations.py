@@ -10,7 +10,7 @@ import easygui
 
 ############## SET POSITION PARAMETERS HERE
 pitch = 0
-repeats = 5
+repeats = 10
 x_positions = np.linspace(-200, 400, 20)
 y_positions = np.asarray([-100, -75, -50, -25, 0, 25, 50, 75, 100])
 z_position = 300
@@ -76,7 +76,7 @@ time.sleep(15)
 for index, combination in enumerate(combinations):
     if index < last_index: continue
     print('#' * 25)
-    print('>>>> POSITION', index, 'OF', len(combinations))
+    print('>>>> POSITION', index + 1, 'OF', len(combinations))
     print('#' * 25)
 
     position = combination[0]
