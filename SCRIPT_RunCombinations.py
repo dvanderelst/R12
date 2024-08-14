@@ -12,7 +12,7 @@ import easygui
 ############## SET POSITION PARAMETERS HERE
 pitch = 0
 repeats = 10
-x_positions = np.linspace(-200, 400, 20)
+x_positions = np.linspace(-200, 600, 32)
 y_positions = np.asarray([-100, -75, -50, -25, 0, 25, 50, 75, 100])
 z_position = 300
 yaw_positions = np.asarray([0])
@@ -76,9 +76,11 @@ time.sleep(15)
 
 try:
     for index, combination in enumerate(combinations):
+        iteration_message = 'Position ' + str(index + 1) + ' of ' + str(len(combinations))
+        if index > 0 and index % 100 == 0: Bullet.send(body=iteration_message, title='Message from robot')
         if index < last_index: continue
         print('#' * 25)
-        print('>>>> POSITION', index + 1, 'OF', len(combinations))
+        print('>>>>' + iteration_message)
         print('#' * 25)
 
         position = combination[0]
@@ -114,10 +116,10 @@ try:
             'script_text': script_text,
             'last_index': index
         }
-    
+
         file = open(full_file_name, 'wb')
         pickle.dump(data_to_save, file)
         file.close()
     Bullet.send(body='Robot Ready', title='Message from robot')
 finally:
-    Bullet.send(body='Error occured', title='Message from robot')
+    Bullet.send(body='Error occurred', title='Message from robot')
