@@ -1,4 +1,5 @@
 from R12 import RobotBat
+from R12 import Bullet
 from R12 import CombinationTools
 from os import path
 import numpy as np
@@ -73,46 +74,50 @@ if path.exists(full_file_name):
 easygui.msgbox(msg='Start')
 time.sleep(15)
 
-for index, combination in enumerate(combinations):
-    if index < last_index: continue
-    print('#' * 25)
-    print('>>>> POSITION', index + 1, 'OF', len(combinations))
-    print('#' * 25)
+try:
+    for index, combination in enumerate(combinations):
+        if index < last_index: continue
+        print('#' * 25)
+        print('>>>> POSITION', index + 1, 'OF', len(combinations))
+        print('#' * 25)
 
-    position = combination[0]
-    indices = combination[1]
-    current_x = position[0]
-    current_y = position[1]
-    current_yaw = position[2]
-    x_index = indices[0]
-    y_index = indices[1]
-    yaw_index = indices[2]
-    if not z_position: z_position = np.interp(current_y, y_extents, z_extents)
-    move_result = R.set_position(current_x, current_y, z_position, current_yaw, pitch)
-    success_array[x_index, y_index, yaw_index] = move_result
-    for i in range(repeats):
-        plot = False
-        if i == repeats - 1: plot = True
-        data = R.measure(plot=plot, title=str(position))
-        data_array[x_index, y_index, yaw_index, i, :, :] = data
-        time.sleep(0.1)
+        position = combination[0]
+        indices = combination[1]
+        current_x = position[0]
+        current_y = position[1]
+        current_yaw = position[2]
+        x_index = indices[0]
+        y_index = indices[1]
+        yaw_index = indices[2]
+        if not z_position: z_position = np.interp(current_y, y_extents, z_extents)
+        move_result = R.set_position(current_x, current_y, z_position, current_yaw, pitch)
+        success_array[x_index, y_index, yaw_index] = move_result
+        for i in range(repeats):
+            plot = False
+            if i == repeats - 1: plot = True
+            data = R.measure(plot=plot, title=str(position))
+            data_array[x_index, y_index, yaw_index, i, :, :] = data
+            time.sleep(0.1)
 
-    data_to_save = {
-        'data_array': data_array,
-        'success_array': success_array,
-        'combinations': combinations,
-        'x_positions': x_positions,
-        'y_positions': y_positions,
-        'y_extents': y_extents,
-        'z_extents': z_extents,
-        'yaw_positions': yaw_positions,
-        'pitch': pitch,
-        'repeats': repeats,
-        'description': description,
-        'script_text': script_text,
-        'last_index': index
-    }
-
-    file = open(full_file_name, 'wb')
-    pickle.dump(data_to_save, file)
-    file.close()
+        data_to_save = {
+            'data_array': data_array,
+            'success_array': success_array,
+            'combinations': combinations,
+            'x_positions': x_positions,
+            'y_positions': y_positions,
+            'y_extents': y_extents,
+            'z_extents': z_extents,
+            'yaw_positions': yaw_positions,
+            'pitch': pitch,
+            'repeats': repeats,
+            'description': description,
+            'script_text': script_text,
+            'last_index': index
+        }
+    
+        file = open(full_file_name, 'wb')
+        pickle.dump(data_to_save, file)
+        file.close()
+    Bullet.send(body='Robot Ready', title='Message from robot')
+finally:
+    Bullet.send(body='Error occured', title='Message from robot')
