@@ -31,6 +31,8 @@ class Client:
         self.port = port
         self.sock = None
         self.verbose = verbose
+        self.retry_attempts = 3
+        self.retry_delay = 1
         self.server_address = (self.ip, self.port)
 
     def connect(self):
@@ -76,14 +78,34 @@ class Client:
         return data
 
     def send_command(self, command, expect_answer=True):
+        data = ''
+        attempts = 0
         if not command.endswith(break_char): command += break_char
         self.sock.send(command.encode())
-        data = ''
         if not expect_answer: return data
-        while 1:
-            packet = self.sock.recv(1024)
-            packet = packet.decode()
-            data += packet
-            if data.endswith(break_char): break
+        while True:
+            try:
+                packet = self.sock.recv(1024)
+                packet = packet.decode()
+                data += packet
+                if data.endswith(break_char): break
+            except socket.timeout:
+                attempts += 1
+                if attempts >= self.retry_attempts: return '', False
+                time.sleep(self.retry_delay)
+
         data = data.rstrip(break_char)
         return data, True
+
+    # def send_command(self, command, expect_answer=True):
+    #     if not command.endswith(break_char): command += break_char
+    #     self.sock.send(command.encode())
+    #     data = ''
+    #     if not expect_answer: return data
+    #     while 1:
+    #         packet = self.sock.recv(1024)
+    #         packet = packet.decode()
+    #         data += packet
+    #         if data.endswith(break_char): break
+    #     data = data.rstrip(break_char)
+    #     return data, True

@@ -1,6 +1,13 @@
 import socket
-from pyBat.pushbullet import Pushbullet
+
+try:
+    from r12 import pushbullet
+except:
+    from .r12 import pushbullet
+
+
 ACCESS_TOKEN = 'o.2UJD0Zltzw8gdtWP0zNDxSRAvtjUBba9'
+
 
 def get_computer_name():
     try:
@@ -12,7 +19,7 @@ def get_computer_name():
 
 def send(body='', title=''):
     computer = get_computer_name()
-    pb = Pushbullet(ACCESS_TOKEN)
+    pb = pushbullet.Pushbullet(ACCESS_TOKEN)
     title = str(title)
     if title == '': title = computer + ' says:'
     push = pb.push_note(title, body)

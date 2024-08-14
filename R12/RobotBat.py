@@ -256,6 +256,7 @@ class RobotBat:
         if plot:
             to_plot = data.copy()
             if db: to_plot = 20 * numpy.log10(to_plot)
+            pyplot.figure()
             pyplot.plot(to_plot)
             pyplot.legend(['Left', 'Right'])
             pyplot.title(title)

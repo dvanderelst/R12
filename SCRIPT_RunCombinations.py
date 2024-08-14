@@ -77,7 +77,7 @@ time.sleep(15)
 try:
     for index, combination in enumerate(combinations):
         iteration_message = 'Position ' + str(index + 1) + ' of ' + str(len(combinations))
-        if index > 0 and index % 100 == 0: Bullet.send(body=iteration_message, title='Message from robot')
+        if index > 0 and index % 25 == 0: Bullet.send(body=iteration_message, title=file_name)
         if index < last_index: continue
         print('#' * 25)
         print('>>>>' + iteration_message)
@@ -120,6 +120,6 @@ try:
         file = open(full_file_name, 'wb')
         pickle.dump(data_to_save, file)
         file.close()
-    Bullet.send(body='Robot Ready', title='Message from robot')
+    Bullet.send(body='Robot Ready')
 finally:
-    Bullet.send(body='Error occurred', title='Message from robot')
+    Bullet.send(body='Error occurred')
