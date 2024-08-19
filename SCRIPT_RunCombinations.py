@@ -1,5 +1,5 @@
 from R12 import RobotBat
-from R12 import Bullet
+from R12 import Bullet as Message
 from R12 import CombinationTools
 from os import path
 import numpy as np
@@ -77,7 +77,7 @@ time.sleep(15)
 try:
     for index, combination in enumerate(combinations):
         iteration_message = 'Position ' + str(index + 1) + ' of ' + str(len(combinations))
-        if index > 0 and index % 25 == 0: Bullet.send(body=iteration_message, title=file_name)
+        if index > 0 and index % 25 == 0: Message.send(body=iteration_message, title=file_name)
         if index < last_index: continue
         print('#' * 25)
         print('>>>>' + iteration_message)
@@ -120,6 +120,6 @@ try:
         file = open(full_file_name, 'wb')
         pickle.dump(data_to_save, file)
         file.close()
-    Bullet.send(body='Robot Ready')
+    Message.send(body='Robot Ready')
 finally:
-    Bullet.send(body='Error occurred')
+    Message.send(body='Error occurred')
