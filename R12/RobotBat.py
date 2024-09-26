@@ -94,6 +94,7 @@ class RobotBat:
 
         self.frame = Geometry.Frame()
         self.frame_initialized = False
+        self.set_tool_length()
 
     def view_log(self):
         self.logger.view()

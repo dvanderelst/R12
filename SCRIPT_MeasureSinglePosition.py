@@ -8,7 +8,7 @@ from matplotlib import pyplot
 
 R = RobotBat.RobotBat(connect_robot=True, connect_sonar=True)
 
-world_x = -200
+world_x = 500
 world_y = 200
 world_pitch = 0
 world_yaw = 27.5

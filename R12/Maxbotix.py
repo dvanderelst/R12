@@ -31,22 +31,44 @@ class Client:
         self.port = port
         self.sock = None
         self.verbose = verbose
-        self.retry_attempts = 3
-        self.retry_delay = 1
         self.server_address = (self.ip, self.port)
+        # For sending/receiving
+        self.send_attempts = 3
+        self.retry_delay = 1
+        # For connecting
+        self.connect_attempts = 15
+        self.connect_delay = 1  # Initial delay in seconds
 
     def connect(self):
-        while True:
+        attempt = 0
+        while attempt < self.connect_attempts:
             try:
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock.settimeout(2)
                 self.sock.connect(self.server_address)
                 self.sock.settimeout(10)
                 break
-            except socket.timeout:
-                self.sock.close()
-                print('sonar: Trying to reconnect')
-                time.sleep(3)
+            except (socket.timeout, socket.error) as e:
+                if self.sock:self.sock.close()
+                attempt += 1
+                delay = self.connect_delay
+                print(f"Connection failed: {e}. Retrying in {delay} seconds...")
+                time.sleep(delay)
+        else:
+            raise ConnectionError("Unable to connect after several retries")
+
+    # def connect(self):
+    #     while True:
+    #         try:
+    #             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #             self.sock.settimeout(2)
+    #             self.sock.connect(self.server_address)
+    #             self.sock.settimeout(10)
+    #             break
+    #         except socket.timeout:
+    #             self.sock.close()
+    #             print('sonar: Trying to reconnect')
+    #             time.sleep(3)
 
     def disconnect(self):
         self.sock.close()
@@ -91,7 +113,7 @@ class Client:
                 if data.endswith(break_char): break
             except socket.timeout:
                 attempts += 1
-                if attempts >= self.retry_attempts: return '', False
+                if attempts >= self.send_attempts: return '', False
                 time.sleep(self.retry_delay)
 
         data = data.rstrip(break_char)

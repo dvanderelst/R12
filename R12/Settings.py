@@ -1,13 +1,14 @@
 log_dir = 'logs'
 
-tool_length = 55
+tool_length = 59
 wrist_length = 63
 robot_reach = 500-50
 robot_reach_buffer = 25
 track_position = 'down'
 
 
-sonar_ip = '192.168.1.26'
+#sonar_ip = '192.168.1.26' # on batnet
+sonar_ip = '192.168.0.182' # on batnet_mobile
 sonar_port = 1000
 sonar_rate = 10000
 sonar_duration = 20

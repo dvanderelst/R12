@@ -1,5 +1,5 @@
 from R12 import RobotBat
-from R12 import Bullet as Message
+from R12 import PushOver as Message
 from R12 import CombinationTools
 from os import path
 import numpy as np
@@ -8,21 +8,24 @@ import time
 import sys
 import inspect
 import easygui
+import random
 
 ############## SET POSITION PARAMETERS HERE
 pitch = 0
 repeats = 10
-x_positions = np.linspace(-200, 600, 32)
-y_positions = np.asarray([-100, -75, -50, -25, 0, 25, 50, 75, 100])
+x_positions = np.linspace(-200, 500, 29)
+y_positions = np.linspace(-100, 100, 17) #np.asarray([-100, -75, -50, -25, 0, 25, 50, 75, 100])
 z_position = 300
 yaw_positions = np.asarray([0])
+file_name = 'Empty03'
+description = 'no poles'
 ###########################################
 
 script_text = inspect.getsource(sys.modules[__name__])
 y_extents = [0, 100, 200, 300]
 z_extents = [500, 400, 300, 300]
 
-file_name, description = CombinationTools.get_file_name()
+#file_name, description = CombinationTools.get_file_name()
 full_file_name = path.join('data', file_name + '.pck')
 
 combinations = CombinationTools.generate_combinations(x_positions, y_positions, yaw_positions)
@@ -33,7 +36,7 @@ CombinationTools.print_as_integers('yaw_positions', yaw_positions)
 print('Nr of combinations:', len(combinations))
 
 R = RobotBat.RobotBat(connect_robot=True, connect_sonar=True)
-test_data = R.measure(subtract_floor=False, plot=True)
+test_data = R.measure(plot=True)
 test_data_shape = test_data.shape
 nr_x_positions = len(x_positions)
 nr_y_positions = len(y_positions)
@@ -62,7 +65,8 @@ if path.exists(full_file_name):
     if existing_matches:
         action = CombinationTools.ask_action()
         if action == 'Stop script':
-            sys.exit('Stopped by user')
+            print('Stopped by user')
+            sys.exit()
         if action == 'Continue existing data':
             data_array = existing_data['data_array']
             success_array = existing_data['success_array']
@@ -71,13 +75,15 @@ if path.exists(full_file_name):
 #
 # Ask whether to start...
 #
+R.set_position(-300, 0, z_position, 0, 0)
 easygui.msgbox(msg='Start')
 time.sleep(15)
-
+done = False
 try:
     for index, combination in enumerate(combinations):
+        if index == 0: Message.send('Started ' + file_name)
         iteration_message = 'Position ' + str(index + 1) + ' of ' + str(len(combinations))
-        if index > 0 and index % 25 == 0: Message.send(body=iteration_message, title=file_name)
+        if index > 0 and index % 100 == 0: Message.send(iteration_message)
         if index < last_index: continue
         print('#' * 25)
         print('>>>>' + iteration_message)
@@ -95,11 +101,12 @@ try:
         move_result = R.set_position(current_x, current_y, z_position, current_yaw, pitch)
         success_array[x_index, y_index, yaw_index] = move_result
         for i in range(repeats):
+            delay = random.uniform(0.1, 0.25)
+            time.sleep(delay)
             plot = False
-            if i == repeats - 1: plot = True
+            if i == repeats - 1 and index % 25 == 0: plot = True
             data = R.measure(plot=plot, title=str(position))
             data_array[x_index, y_index, yaw_index, i, :, :] = data
-            time.sleep(0.1)
 
         data_to_save = {
             'data_array': data_array,
@@ -120,6 +127,8 @@ try:
         file = open(full_file_name, 'wb')
         pickle.dump(data_to_save, file)
         file.close()
-    Message.send(body='Robot Ready')
+    Message.send('Done: ' + file_name)
+    done = True
 finally:
-    Message.send(body='Error occurred')
+    if not done: Message.send('Error occurred')
+    print(done)
